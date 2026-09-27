@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from core.database import engine, Base
-from routers import auth, templates, generator
+from routers import auth, templates, generator, health
 
 app = FastAPI(
     title="PDF Nomad API",
@@ -17,6 +17,7 @@ async def startup():
         await conn.run_sync(Base.metadata.create_all)
 
 # Include Routers
+app.include_router(health.router, tags=["Health"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(templates.router, prefix="/api/v1/templates", tags=["Templates & Layouts"])
 app.include_router(generator.router, prefix="/api/v1/generator", tags=["PDF Generation & Extraction"])

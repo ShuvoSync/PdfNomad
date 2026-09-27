@@ -1,13 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime , JSON , UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
-from core.database import Base
+from core.base_model import BaseModel
 
-class Subscription(Base):
+class Subscription(BaseModel):
     __tablename__ = "subscriptions"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+    user_id = Column(UUID, ForeignKey("users.id"), unique=True, nullable=False)
     
     # Plan info & Status
     plan_name = Column(String, default="free")             # free, pro, enterprise
@@ -26,6 +25,4 @@ class Subscription(Base):
     # Payment Gateway Reference (Stripe/LemonSqueezy ID)
     gateway_subscription_id = Column(String, nullable=True, unique=True)
     
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-
     user = relationship("User", back_populates="subscription")

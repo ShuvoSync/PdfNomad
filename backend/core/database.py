@@ -20,9 +20,6 @@ async_session_maker = async_sessionmaker(
     expire_on_commit=False
 )
 
-class Base(DeclarativeBase, AsyncAttrs):
-    pass
-
 # Dependency to get DB session in FastAPI endpoints
 async def get_db():
     async with async_session_maker() as session:
