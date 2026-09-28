@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from core.database import engine, Base
 from routers import auth, templates, generator, health
 
@@ -10,8 +11,17 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# CORS — allow frontend dev server
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Automatically create database tables on startup (great for local mobile SQLite testing)
-@app.on_event("startup")
+# @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

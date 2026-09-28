@@ -2,7 +2,9 @@
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, Boolean
-from sqlalchemy.orm import DeclarativeBase, AsyncAttrs
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import AsyncAttrs
+
 
 class Base(DeclarativeBase, AsyncAttrs):
     pass
