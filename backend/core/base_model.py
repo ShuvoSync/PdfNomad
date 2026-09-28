@@ -1,3 +1,4 @@
+# core/base_model.py
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, Boolean
@@ -13,7 +14,6 @@ class BaseModel(Base):
     """
     __abstract__ = True
 
-    # Using String(36) to ensure seamless compatibility between SQLite and PostgreSQL later
     id = Column(
         String(36), 
         primary_key=True, 

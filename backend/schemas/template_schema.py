@@ -7,8 +7,8 @@ class TemplateCreate(BaseModel):
     layout_schema: Dict[str, Any]                      # Canvas/formatting rules for rendering
 
 class TemplateResponse(BaseModel):
-    id: int
-    user_id: int
+    id: str
+    user_id: str
     name: str
     extraction_schema: Optional[Dict[str, Any]] = None
     layout_schema: Dict[str, Any]

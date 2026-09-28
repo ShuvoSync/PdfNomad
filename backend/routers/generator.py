@@ -17,7 +17,7 @@ router = APIRouter()
 @router.post("/extract")
 async def extract_pdf_data(
     file: UploadFile = File(...),
-    template_id: int = Form(None),
+    template_id: str = Form(None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
@@ -40,7 +40,7 @@ async def extract_pdf_data(
 
 @router.post("/render")
 async def render_pdf_document(
-    template_id: int = Form(...),
+    template_id: str = Form(...),
     data_payload_json: str = Form(...), # Passed as a JSON string
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)

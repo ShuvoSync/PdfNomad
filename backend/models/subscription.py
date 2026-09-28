@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime , JSON , UUID
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from core.base_model import BaseModel
@@ -6,7 +6,7 @@ from core.base_model import BaseModel
 class Subscription(BaseModel):
     __tablename__ = "subscriptions"
 
-    user_id = Column(UUID, ForeignKey("users.id"), unique=True, nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id"), unique=True, nullable=False)
     
     # Plan info & Status
     plan_name = Column(String, default="free")             # free, pro, enterprise

@@ -47,7 +47,7 @@ async def list_user_templates(
 
 @router.get("/{template_id}", response_model=TemplateResponse)
 async def get_template_by_id(
-    template_id: int,
+    template_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
@@ -69,7 +69,7 @@ async def get_template_by_id(
 
 @router.delete("/{template_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_template(
-    template_id: int,
+    template_id: str,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):

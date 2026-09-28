@@ -6,7 +6,7 @@ from models.user import User
 from models.user_profile import UserProfile
 from models.subscription import Subscription
 from models.limitation import UserLimitation
-from schemas.user_schema import UserCreate, UserResponse, Token
+from schemas.user_schema import UserCreate, LoginRequest, UserResponse, Token
 from services.auth_service import hash_password, verify_password, create_access_token, get_current_user
 
 router = APIRouter()
@@ -43,7 +43,7 @@ async def signup(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
     return new_user
 
 @router.post("/login", response_model=Token)
-async def login(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
+async def login(user_in: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == user_in.email))
     user = result.scalar_one_or_none()
     
@@ -56,6 +56,10 @@ async def login(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
 
 @router.get("/me", response_model=UserResponse)
 async def get_my_profile(current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    # Automatically loads the user profile via SQLAlchemy relationship
-    await db.refresh(current_user, ["profile"])
-    return current_user
+    # Load user with profile relationship using selectinload for async compatibility
+    from sqlalchemy.orm import selectinload
+    result = await db.execute(
+        select(User).options(selectinload(User.profile)).where(User.id == current_user.id)
+    )
+    user = result.scalar_one_or_none()
+    return user

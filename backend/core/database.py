@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs, AsyncSession
-from sqlalchemy.orm import DeclarativeBase
 from core.config import settings
+from core.base_model import Base
 
 # Handle SQLite specific connection arguments if using SQLite
 connect_args = {"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}

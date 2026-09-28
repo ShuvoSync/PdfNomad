@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime , JSON , UUID
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from core.base_model import BaseModel
@@ -6,7 +6,7 @@ from core.base_model import BaseModel
 class UserLimitation(BaseModel):
     __tablename__ = "user_limitations"
 
-    user_id = Column(UUID, ForeignKey("users.id"), unique=True, nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id"), unique=True, nullable=False)
     
     tier = Column(String, default="free")  # free, pro, enterprise
     max_monthly_generations = Column(Integer, default=20)  # Free tier cap
