@@ -7,10 +7,22 @@ services:
       - "8000:8000"
     environment:
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
-      - DATABASE_URL=sqlite+aiosqlite:////data/pdfnomad.db
+      - DATABASE_URL=postgresql+asyncpg://postgres:password@db:5432/pdfnomad
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
     volumes:
       - pdfnomad_data:/data
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=pdfnomad
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   # frontend:
@@ -27,3 +39,4 @@ services:
 
 volumes:
   pdfnomad_data:
+  postgres_data:

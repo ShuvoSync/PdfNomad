@@ -3,7 +3,8 @@
 # ---- Build stage ----
 FROM python:3.14-slim AS builder
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+# Pin uv version for reproducible builds
+COPY --from=ghcr.io/astral-sh/uv:0.6.3 /uv /usr/local/bin/uv
 
 WORKDIR /app
 
@@ -11,7 +12,9 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 
 # Install dependencies into a virtual environment
-RUN uv sync --frozen
+# --frozen: use exact versions from lock file
+# --no-dev: skip dev dependencies for production
+RUN uv sync --frozen --no-dev
 
 # ---- Runtime stage ----
 FROM python:3.14-slim
@@ -26,9 +29,10 @@ COPY . .
 
 # Make virtual environment binaries available on PATH
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
 
 # Create a non-root user for security
-RUN adduser --disabled-password --gecos '' appuser \
+RUN useradd --create-home appuser \
     && chown -R appuser:appuser /app
 USER appuser
 
