@@ -7,7 +7,7 @@ from core.database import get_db
 from models.user import User
 from models.template import Template
 from models.limitation import UserLimitation
-from services.auth_service import get_current_user
+from core.security import get_current_user
 from services.extractor_engine import extract_text_from_pdf_bytes
 from services.renderer_engine import render_pdf_from_metadata
 import json

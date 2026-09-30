@@ -1,4 +1,5 @@
 # core/security.py
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,16 +9,24 @@ from core.database import get_db
 from models.user import User
 from datetime import datetime, timedelta, timezone
 import jwt
-from passlib.context import CryptContext
 from core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    """Hash a password using bcrypt."""
+    password_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password_bytes, salt).decode("utf-8")
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a plain password against a bcrypt hash."""
+    password_bytes = plain_password.encode("utf-8")
+    hashed_bytes = hashed_password.encode("utf-8")
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
@@ -25,11 +34,13 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
+
 def create_password_reset_token(email: str) -> str:
     delta = timedelta(minutes=15)
     expire = datetime.now(timezone.utc) + delta
     to_encode = {"sub": email, "type": "password_reset", "exp": expire}
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
 
 def verify_password_reset_token(token: str) -> str | None:
     try:
@@ -41,13 +52,8 @@ def verify_password_reset_token(token: str) -> str | None:
         return None
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
-
-# ... (keep your hash_password, verify_password, create_access_token here) ...
-
 async def get_current_user(
-    token: str = Depends(oauth2_scheme), 
+    token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db)
 ) -> User:
     """
@@ -69,8 +75,8 @@ async def get_current_user(
 
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
-    
+
     if user is None:
         raise credentials_exception
-        
+
     return user

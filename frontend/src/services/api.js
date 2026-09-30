@@ -33,6 +33,12 @@ export const authApi = {
   signup: (data) => api.post('/api/v1/auth/signup', data),
   login: (data) => api.post('/api/v1/auth/login', data),
   me: () => api.get('/api/v1/auth/me'),
+  logout: () => api.post('/api/v1/auth/logout'),
+  changePassword: (data) => api.post('/api/v1/auth/change-password', data),
+  setPassword: (data) => api.post('/api/v1/auth/set-password', data),
+  forgotPassword: (data) => api.post('/api/v1/auth/forgot-password', data),
+  resetPassword: (data) => api.post('/api/v1/auth/reset-password', data),
+  socialLogin: (data) => api.post('/api/v1/auth/social-login', data),
 }
 
 // ── Templates ─────────────────────────────────────────
