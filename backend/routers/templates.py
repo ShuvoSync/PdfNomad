@@ -7,7 +7,7 @@ from core.database import get_db
 from models.template import Template
 from models.user import User
 from schemas.template_schema import TemplateCreate, TemplateResponse
-from services.auth_service import get_current_user
+from core.security import get_current_user
 
 router = APIRouter()
 

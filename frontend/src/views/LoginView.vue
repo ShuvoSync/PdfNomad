@@ -22,6 +22,10 @@
         </button>
       </form>
 
+      <p class="forgot-password">
+        <router-link to="/forgot-password">Forgot password?</router-link>
+      </p>
+
       <p class="switch-auth">
         Don't have an account?
         <router-link to="/signup">Sign up</router-link>
@@ -72,6 +76,12 @@ h2 {
 
 .full-width {
   width: 100%;
+}
+
+.forgot-password {
+  margin-top: 0.75rem;
+  text-align: right;
+  font-size: 0.875rem;
 }
 
 .switch-auth {
